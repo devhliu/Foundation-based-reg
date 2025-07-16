@@ -4,7 +4,7 @@ This is the **official repository** for our paper:
 
 **_"Are Vision Foundation Models Ready for Out-of-the-Box Medical Image Registration?"_** [📄 Paper Link]
 
-**Author**: Hanxue Gu*, Yaqian Chen*, Nick Knoz, Qihang Li and Maciej A. Mazurowski
+**Author**: Hanxue Gu*, Yaqian Chen*, Nick Konz, Qihang Li and Maciej A. Mazurowski
 
 ---
 
