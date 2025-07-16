@@ -55,7 +55,7 @@ pip install -r requirements.txt
   - `fix_volume`: fixed image
 
 ✅ You can refer to the provided `sample_dataset_dir/` for a template and example setup.
-- You can download our sampled examples with two pre-contrast breast MRI from the same patient taken at different date from [Google drive](https://drive.google.com/drive/folders/16m2xlq4N4p5EE5va8LKBI4HohbG9vWzv?usp=drive_link).
+- You can download our prepared examples with two pre-contrast breast MRIs from the same patient taken at different dates from [Google drive](https://drive.google.com/drive/folders/16m2xlq4N4p5EE5va8LKBI4HohbG9vWzv?usp=drive_link).
 
 ---
 
