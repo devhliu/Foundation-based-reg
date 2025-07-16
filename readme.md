@@ -78,7 +78,14 @@ Key config fields:
 
 ---
 
-### 📊 Step 4: Validation and Visualization
+### 😃 Step 4: Run Registration Code
+```python
+python inference_reg.py --cfg config-dinov2-task1.py
+
+```
+
+
+### 📊 Step 5: Validation and Visualization
 
 You can validate and visualize registration performance using the following tools:
 
