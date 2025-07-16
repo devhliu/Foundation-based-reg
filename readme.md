@@ -58,6 +58,14 @@ pip install -r requirements.txt
 
 ---
 
+### Step 3: Encoders preparation
+For all models, you can find the model weights to be downloaded in their original repo. 
+
+For SAM, please choose to download the Vit-b version.
+
+For SSLSAM, you can find the model weights under [SSLSAM](https://drive.google.com/drive/folders/1JAoy-Mh5QgxXsjWtQhMjOX16dN1kytLQ).
+
+
 ### ⚙️ Step 3: Configure Your Experiment
 
 Edit the configuration file for your experiment. You can choose different models and adjust paths:
