@@ -2,7 +2,7 @@
 
 This is the **official repository** for our paper:
 
-**_"Are Vision Foundation Models Ready for Out-of-the-Box Medical Image Registration?"_** [📄 Paper Link]
+**_"Are Vision Foundation Models Ready for Out-of-the-Box Medical Image Registration?"_** [📄 Paper Link](https://arxiv.org/abs/2507.11569)
 
 **Author**: Hanxue Gu*, Yaqian Chen*, Nick Konz, Qihang Li and Maciej A. Mazurowski
 
@@ -128,6 +128,14 @@ We are currently releasing the **zero-shot, image-only** registration pipeline.
 Feel free to ⭐️ this repo, and cite our work if you find this repo helpful!
 
 ```
-
+@misc{gu2025visionfoundationmodelsready,
+      title={Are Vision Foundation Models Ready for Out-of-the-Box Medical Image Registration?}, 
+      author={Hanxue Gu and Yaqian Chen and Nicholas Konz and Qihang Li and Maciej A. Mazurowski},
+      year={2025},
+      eprint={2507.11569},
+      archivePrefix={arXiv},
+      primaryClass={eess.IV},
+      url={https://arxiv.org/abs/2507.11569}, 
+}
 
 ```
