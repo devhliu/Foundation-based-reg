@@ -1,0 +1,30 @@
+import torchvision.transforms as tt
+
+configs = {
+    'model_ver': 'dino-v3',
+    'exp_note': 'breast_multi-seq-multi-time',
+    'path_csv':'task3_diff_time_diff_seq.csv',
+    'patch_size':16,
+    'embed_dim':784,
+    'reg_featureDim': 8,
+    'smooth_weight': 2,
+    'lr': 3,
+    'num_iter': 1000,
+    'fm_downsample': 2,
+    'feature_size': (96, 96),
+    'useSavedPCA': False,
+    'foundReg_useMask': False,
+    'data_dir':'../sample_dataset_dir',
+    'img_dir':'multi-seq_processed',
+    'mask_dir':'dt_breast_seg_rotate',
+    'save_feature':False,
+    'window': True,
+    'convex': False,
+    'ztrans': False,
+    'quantify':False,
+    'iter_smooth_num': 5,
+    'iter_smooth_kernel': 7,
+    'final_upsample': 1,
+    'mask': 'slice fill stack',
+    'transform': tt.Compose([])
+}

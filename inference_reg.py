@@ -74,6 +74,7 @@ class foundReg:
         self.num_iter = configs['iter_smooth_num'] 
         self.lr = configs['lr']
         self.smooth_weight = configs['smooth_weight']
+        self.save_feature = configs['save_feature']
         print('learning rate', self.lr)
 
         self.feature_height = self.img_size[0] // self.patch_size
@@ -88,7 +89,7 @@ class foundReg:
         input_tensor = torch.Tensor(np.transpose(input_rgb_array, [0, 3, 1, 2]))
         input_tensor = self.transform(input_tensor)
         print('input_tensor shape:',input_tensor.shape, input_tensor.max(),input_tensor.min())
-        if self.model_ver == 'dino-v2':
+        if self.model_ver in ('dino-v2', 'dino-v3'):
             feature_array = self.model.forward_features(input_tensor.to(device=torch.device('cuda', self.device_id)))[
                 'x_norm_patchtokens'].detach().cpu().numpy()
         elif self.model_ver =='mricore':
@@ -106,7 +107,7 @@ class foundReg:
 
 
     def case_inference(self, mov_arr, fix_arr, orig_img_shape, aff_mov,
-                       mask_fixed=None, mask_moving=None, case_id='noID', disp_init=None, grid_sp_adam=1,foundReg_useMask=True):
+                       mask_fixed=None, mask_moving=None, fix_case_id='noID', mov_case_id = 'noID', disp_init=None, grid_sp_adam=1,foundReg_useMask=True):
 
         assert len(mov_arr.shape) == 3
 
@@ -132,6 +133,11 @@ class foundReg:
             feat_sliceNum = self.slice_num
             print('encoded moving image, feature shape:',mov_feature.shape)
             print('encoded fixed image, feature shape:',fix_feature.shape)
+
+            if self.save_feature:
+                os.makedirs(os.path.join(output_dir, 'features'), exist_ok=True)
+                np.save(os.path.join(output_dir, 'features', mov_case_id + '_feat_org.npy'), mov_feature)
+                np.save(os.path.join(output_dir, 'features', fix_case_id + '_feat_org.npy'), fix_feature)
 
 
             """PCA reduce dimension"""
@@ -186,9 +192,6 @@ class foundReg:
     
             eigenvalue_array.append(eigenvalues[:24])
     
-    
-    
-    
             print('reshaping to original image shape')
             mov_pca_rescaled = resize(mov_pca, (orig_chunked_shape[0], orig_chunked_shape[1], orig_chunked_shape[2], self.reg_featureDim),
                                        anti_aliasing=True)
@@ -208,20 +211,20 @@ class foundReg:
 
         
 
-        if save_feature:
+        if self.save_feature:
             """save copy of 1 channel feature for vis"""
-            for channel in range(3):
+            for channel in range(1):
                 mov_feat_1dim = mov_fullImg_pca_rescaled[:,:,:,channel*3:channel*3+3]
                 fix_feat_1dim = fix_fullImg_pca_rescaled[:,:,:,channel*3:channel*3+3]
                 movImg_1dim = nib.Nifti1Image(mov_feat_1dim, aff_mov)
                 fixImg_1dim = nib.Nifti1Image(fix_feat_1dim, aff_mov)
                 os.makedirs(os.path.join(output_dir, 'vis'), exist_ok=True)
-                nib.save(movImg_1dim, os.path.join(output_dir, 'vis', case_id + '_mov_{}.nii.gz'.format(channel)))
-                nib.save(fixImg_1dim, os.path.join(output_dir, 'vis', case_id + '_fix_{}.nii.gz'.format(channel)))
+                nib.save(movImg_1dim, os.path.join(output_dir, 'vis', mov_case_id + '_mov_{}.nii.gz'.format(channel)))
+                nib.save(fixImg_1dim, os.path.join(output_dir, 'vis', fix_case_id + '_fix_{}.nii.gz'.format(channel)))
             
-            os.makedirs(os.path.join(output_dir_0, 'features'), exist_ok=True)
-            np.save(os.path.join(output_dir_0, 'features', case_id + '_mov_feat.npy'), mov_fullImg_pca_rescaled)
-            np.save(os.path.join(output_dir_0, 'features', case_id + '_fix_feat.npy'), fix_fullImg_pca_rescaled)
+            os.makedirs(os.path.join(output_dir, 'features'), exist_ok=True)
+            np.save(os.path.join(output_dir, 'features', mov_case_id + '_feat_pca.npy'), mov_fullImg_pca_rescaled)
+            np.save(os.path.join(output_dir, 'features', fix_case_id + '_feat_pca.npy'), fix_fullImg_pca_rescaled)
 
         """ConvexAdam optimization"""
         print('starting ConvexAdam optimization')
@@ -266,6 +269,18 @@ class foundReg:
 
         if self.model_ver =='MIND':
             return None
+        elif self.model_ver == 'dino-v3':
+            self.patch_size = 16
+            self.embed_dim = 768
+            model_name =  'dinov3_vitb16'
+            DINOV3_GITHUB_LOCATION = "facebookresearch/dinov3"
+            DINOV3_LOCATION = './dinov3'
+            model = torch.hub.load(
+                repo_or_dir=DINOV3_LOCATION,
+                model=model_name,
+                source="local",
+                weights = './dinov3/dinov3_vitb16_pretrain_lvd1689m-73cec8be.pth',
+            )
         elif self.model_ver=='dino-v2':
             conf_fn = '{0:s}/dinov2/configs/eval/vitl14_reg4_pretrain'.format(sys.path[0])
             model_fn = 'models/dinov2/dinov2_vitl14_reg4_pretrain.pth'
@@ -410,8 +425,8 @@ if __name__ == '__main__':
         for row in reader:
             pair_list.append(row)
 
-    pair_list = pair_list[1:]
-
+    pair_list = [pair_list[i] for i in [1,2,3]] #pair_list[[1:]]
+    #pair_list = pair_list[31:]
 
     quantify = configs['quantify']
 
@@ -474,7 +489,7 @@ if __name__ == '__main__':
             disp_init = nib.load(os.path.join(output_dir_0, load_note, i + '_disp_{}.nii.gz'.format(load_note))).get_fdata()
             disp_init = np.moveaxis(disp_init, 3, 0)[np.newaxis, :, :, :, :]
 
-        disp = foundReg.case_inference(arr_moving, arr_fixed, arr_moving.shape, aff_mov, case_id=fixed_basename, 
+        disp = foundReg.case_inference(arr_moving, arr_fixed, arr_moving.shape, aff_mov, fix_case_id=fixed_basename,mov_case_id=moving_basename, 
                                       disp_init=disp_init, grid_sp_adam=configs['fm_downsample'], foundReg_useMask=configs['foundReg_useMask'])
         
         #save disp
