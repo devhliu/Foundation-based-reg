@@ -425,8 +425,8 @@ if __name__ == '__main__':
         for row in reader:
             pair_list.append(row)
 
-    pair_list = [pair_list[i] for i in [1,2,3]] #pair_list[[1:]]
-    #pair_list = pair_list[31:]
+    #pair_list = [pair_list[i] for i in [1,2,3]] #pair_list[[1:]]
+    pair_list = pair_list[1:]
 
     quantify = configs['quantify']
 
