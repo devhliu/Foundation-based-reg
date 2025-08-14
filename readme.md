@@ -17,6 +17,7 @@ This repository implements a **training-free (zero-shot)** medical image registr
 - [MedSAM](https://github.com/bowang-lab/MedSAM)
 - [SSL-SAM](https://github.com/mazurowski-lab/finetune-SAM/)
 - [MedCLIP-SAMv2](https://github.com/healthx-lab/medclip-samv2)
+- [DINOV3](https://github.com/facebookresearch/dinov3)
 
 Each model is used to extract image features that are then aligned using a training-free registration optimization pipeline—**no fine-tuning required**. Though our paper is heavily focused on breast image registration, we excited to see how it can be extended into other tasks!
 
